@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎂 Divine Birthday Wishes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Raleway&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Raleway', sans-serif;
+      background: radial-gradient(ellipse at bottom, #fceabb, #f8b500);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Great Vibes', cursive;
+      text-shadow: 2px 2px #000;
+    }
+
+    .card {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 25px;
+      box-shadow: 0 0 20px #fff;
+      animation: fadeIn 2s ease;
+      text-align: center;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+    }
+
+    button {
+      background-color: gold;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Fireworks Canvas */
+    #fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #000 url('https://cdn.pixabay.com/photo/2017/08/30/07/52/celebration-2695780_1280.jpg') no-repeat center center/cover;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fireworks Canvas -->
+<canvas id="fireworks"></canvas>
+
+<!-- Background Music -->
+<audio autoplay loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mp3">
+</audio>
+
+<!-- Questionnaire -->
+<div id="questionnaire" class="card">
+  <h1>🎉 Welcome to Your Birthday Celebration 🎉</h1>
+  <p>Let's start with some fun!</p>
+  <input type="text" id="name" placeholder="Your Name"><br>
+  <input type="text" id="color" placeholder="Your Favorite Color"><br>
+  <input type="text" id="food" placeholder="Your Favorite Food"><br>
+  <label>Date of Birth:</label><br>
+  <select id="day"></select>
+  <select id="month"></select>
+  <select id="year"></select><br>
+  <button onclick="submitData()">Celebrate 🎂</button>
+</div>
+
+<!-- Birthday Wishes -->
+<div id="birthdayContent" class="card hidden"></div>
+
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+  // Populate day/month/year
+  for (let d = 1; d <= 31; d++) document.getElementById("day").innerHTML += `<option>${d}</option>`;
+  ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].forEach(m => {
+    document.getElementById("month").innerHTML += `<option>${m}</option>`;
+  });
+  for (let y = 1950; y <= new Date().getFullYear(); y++) document.getElementById("year").innerHTML += `<option>${y}</option>`;
+
+  function submitData() {
+    const name = document.getElementById("name").value.trim();
+    if (!name) return alert("Please enter your name!");
+
+    const data = {
+      name,
+      color: document.getElementById("color").value,
+      food: document.getElementById("food").value,
+      dob: `${document.getElementById("day").value}-${document.getElementById("month").value}-${document.getElementById("year").value}`
+    };
+
+    localStorage.setItem("birthdayData", JSON.stringify(data));
+    location.reload();
+  }
+
+  const stored = localStorage.getItem("birthdayData");
+  if (stored) {
+    document.getElementById("questionnaire").classList.add("hidden");
+    const data = JSON.parse(stored);
+    const b = document.getElementById("birthdayContent");
+    b.classList.remove("hidden");
+    b.innerHTML = `
+      <h1>🌟 Happy Birthday ${data.name}! 🌟</h1>
+      <p>🎨 You love the color <strong>${data.color || "Surprise!"}</strong></p>
+      <p>🍕 Your favorite food is <strong>${data.food || "Yummy mystery!"}</strong></p>
+      <p>📅 Born on: <strong>${data.dob}</strong></p>
+      <hr>
+      <h2>🕉️ Blessings from Lord Rama</h2>
+      <p>🌸 "धर्मो रक्षति रक्षितः" — Dharma protects those who protect it.</p>
+      <p>🪔 "Truth always wins. Stay true, stay strong."</p>
+      <p>🙏 Lord Rama says: <em>"Dear ${data.name}, may your life shine like Ayodhya’s lights. Be fearless, righteous, and joyful. Happy Birthday!"</em></p>
+      <hr>
+      <h3>🎉 So... where’s the party? 🎈 We want cake! 🎂</h3>
+      <p>🎁 May your day be magical and your future divine!</p>
+    `;
+    triggerCelebration();
+  }
+
+  function triggerCelebration() {
+    setTimeout(() => {
+      // Confetti burst
+      confetti({
+        particleCount: 200,
+        spread: 160
+      });
+
+      // Fireworks Loop
+      const canvas = document.getElementById('fireworks');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+
+      function createParticle(x, y) {
+        for (let i = 0; i < 100; i++) {
+          particles.push({
+            x, y,
+            radius: Math.random() * 2 + 1,
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            angle: Math.random() * 2 * Math.PI,
+            speed: Math.random() * 5 + 2,
+            alpha: 1
+          });
+        }
+      }
+
+      function updateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += Math.cos(p.angle) * p.speed;
+          p.y += Math.sin(p.angle) * p.speed;
+          p.alpha -= 0.01;
+          ctx.beginPath();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (p.alpha <= 0) particles.splice(i, 1);
+        });
+      }
+
+      setInterval(() => {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height * 0.5;
+        createParticle(x, y);
+      }, 1000);
+
+      function animate() {
+        updateParticles();
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>
